@@ -1,4 +1,4 @@
-This project is an implementation of 3d versiont of Truss Layout Optiomization algorithm.
+This project is an implementation of 3d version of **Truss Layout Optimization** algorithm.
 The 2d version can be found here:
 https://link.springer.com/article/10.1007/s00158-019-02226-6
 
@@ -8,8 +8,8 @@ After installing miniconda https://docs.conda.io/en/latest/miniconda.html, open 
 C:\ProgramData\Miniconda3\Scripts\activate.bat C:\ProgramData\Miniconda3
 conda env create -f D:\Truss\python_projects\environment.yml
 
-*"C:\ProgramData\Miniconda3" - path to your conda intallation.
-*"D:\Truss\python_projects" - path to the foler where you downloaded this project to.
+_*"C:\ProgramData\Miniconda3" - path to your conda installation.
+*"D:\Truss\python_projects" - path to the folder where you downloaded this project to._
 
 The above steps need to be performed only ones per computer.
 
@@ -17,22 +17,22 @@ After that, you can run the project.
 The entry point of the project is main_full_example.py.
 The command line options are:
 
---nas_file_path
+**--nas_file_path**
 Path to the input nastran file. There is on example file in the input folder of the repository.
 
---csv_file_path
+**--csv_file_path**
 Path to the output csv files. The csv file format is: 
 ![](./Picture1.png)
 
---mp4_file_path
+**--mp4_file_path**
 Path to animation files
 
---graph_png_file_path
+**--graph_png_file_path**
 Path to convergency graph picture
 
 The only "must" parameter is "--nas_file_path".
 
-How to run the project from terminal:
+**How to run the project from terminal**:
 
 C:\ProgramData\Miniconda3\Scripts\activate.bat C:\ProgramData\Miniconda3
 conda activate TrussTopologyOptimization
@@ -44,7 +44,7 @@ set PYTHONPATH=%PYTHONPATH%;D:\Truss\python_projects\common_utils_proj;D:\Truss\
 python main_full_example.py --nas_file_path D:\Truss\python_projects\input\nastran\wind_upendra_1.nas --csv_file_path D:\Truss\python_projects\output\wind_upendra_1\upendra.csv --mp4_file_path D:\Truss\python_projects\output\wind_upendra_1\upendra.mp4 --graph_png_file_path D:\Truss\python_projects\output\wind_upendra_1\upendra_graph.png
 
 
-How to debug the project in pycharm:
+**How to debug the project in pycharm:**
 
 Make a project for "algo_proj" directory.
 
