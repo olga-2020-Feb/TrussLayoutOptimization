@@ -1,0 +1,10 @@
+.idea/
+ptc_code/
+algo_proj/.idea/
+common_utils_proj/.idea/
+math_utils_proj/.idea/
+vis_utils_proj/.idea/
+algo_proj/__pycache__/
+common_utils_proj/__pycache__/
+math_utils_proj/__pycache__/
+vis_utils_proj/__pycache__/
