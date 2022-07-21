@@ -1,3 +1,5 @@
+## **Truss Layout Optimization**
+
 This project is an implementation of 3d version of **Truss Layout Optimization** algorithm.
 The 2d version can be found here:
 https://link.springer.com/article/10.1007/s00158-019-02226-6
