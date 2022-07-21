@@ -22,7 +22,7 @@ Path to the input nastran file. There is on example file in the input folder of 
 
 --csv_file_path
 Path to the output csv files. The csv file format is: 
-![](../Picture1.png)
+![](./Picture1.png)
 
 --mp4_file_path
 Path to animation files
