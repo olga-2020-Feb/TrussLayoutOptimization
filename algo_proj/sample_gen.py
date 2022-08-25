@@ -31,7 +31,16 @@ def prepare_input_data(vertices, elems, dof, f, ground_str_edges = None, init_ed
         ground_str_edges = np.delete(edges, i_s <= j_s, axis=0)
 
     if init_edges is None:
-        init_edges = ground_str_edges
+        init_edges = get_edges_from_elements(elems)
+        connected_vert_mask = np.isin(np.arange(len(vertices)), np.unique(init_edges))
+        non_connected_vert_idxs = np.where(connected_vert_mask == False)[0]
+        connected_vert_idxs = np.where(connected_vert_mask)[0]
+        cdists = scipy.spatial.distance.cdist(vertices[non_connected_vert_idxs], vertices[connected_vert_idxs])
+        nearast_idxs = np.argsort(cdists, axis=1)[:, :3]
+        new_edges = np.stack((np.repeat(non_connected_vert_idxs, 3), connected_vert_idxs[nearast_idxs.flatten()])).T
+        init_edges = np.concatenate((np.unique(init_edges, axis=0), new_edges))
+
+
     # Load and support conditions (derived from file)
     # Create the 'ground structure' from the first guess
     if ground_str_edges is not None and init_edges is not None:

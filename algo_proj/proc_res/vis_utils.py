@@ -26,7 +26,9 @@ def plotTrussAnimation(Nd, animation_colors, animation_edges, animation_widths,
     animation_v_e(ver, animation_edges,
                   edge_colors_list=animation_colors, line_width_list=animation_widths,
                   sphere_idxs_list=dof_0_idxs_list, sphere_colors_list=sphere_colors_list,
+                  sphere_size_list=[10] * len(animation_edges),
                   arrow_idxs_list=arrow_idxs_list, arrow_dirs_list=arrow_dirs_list, arrow_colors_list=arrow_colors_list,
+                  arrow_scale_list = [50] * len(animation_edges),
                   file_2_save=output_file_path)
 
 

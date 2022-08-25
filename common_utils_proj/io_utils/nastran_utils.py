@@ -32,7 +32,8 @@ def read_nastran(input_file_path):
     dof[dof_idxs, dof_dim_idxs] = dof_val
 
     f = np.zeros_like(vertices)
-    f[f_idxs, :] = f_vals
+    if len(f_idxs) > 0:
+        f[f_idxs, :] = f_vals
 
 
     return vertices, elems, dof, f

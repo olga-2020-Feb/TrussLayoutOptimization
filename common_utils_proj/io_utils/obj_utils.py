@@ -3,7 +3,9 @@ import numpy as np
 def write_obj(out_file_path, vertices, faces):
 
     v_lines = ['v {} {} {}\n'.format(v[0], v[1], v[2]) for v in vertices]
-    f_lines = ['f {} {} {}\n'.format(f[0], f[1], f[2]) for f in (faces + 1)]
+    f_lines = []
+    if len(faces) > 0:
+        f_lines = ['f {} {} {}\n'.format(f[0], f[1], f[2]) for f in (faces + 1)]
     lines = ['\n'] + v_lines + ['\n'] + f_lines + ['\n']
     with open(out_file_path, 'w') as file:
         file.writelines(lines)

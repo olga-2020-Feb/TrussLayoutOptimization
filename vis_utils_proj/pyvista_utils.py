@@ -122,6 +122,7 @@ def add_tubes(p, start, end, radii = None, colors = None):
 
 def plot_v_f(v, f, colors = None):
     p = pv.Plotter()
+    p.add_axes()
     p.set_background('white')
     pyvista_mesh = numpy_to_pyvista(v, f)
     if colors is None:
@@ -158,6 +159,8 @@ def plot_v_e(v, e,
         if sphere_size is None:
             #sphere_size = np.min(dists) // 2
             sphere_size = np.mean(dists) // 40
+            if sphere_size == 0:
+                sphere_size = 1
         rgb = len(sphere_colors.shape) > 1
         p.add_mesh(points_mesh, style='points', point_size=sphere_size,
                    render_points_as_spheres = True, scalars = sphere_colors, rgb=rgb)
