@@ -14,9 +14,7 @@ def prepareNastran(input_file):
     initials = [1, 1, 1]
     vertices, elems, dof, f = read_nastran(input_file)
     vertices = np.array(vertices)
-    gr_str_edges = get_edges_from_elements(elems)
-    init_gues_edges = get_edges_from_faces(get_mesh_faces_from_tetra_elems(elems))
-    Nd, PML, dof, f = prepare_input_data(vertices, elems, dof, f, gr_str_edges, init_gues_edges)
+    Nd, PML, dof, f = prepare_input_data(vertices, elems, dof, f)
 
     return Nd, dof, f, PML, initials
 
