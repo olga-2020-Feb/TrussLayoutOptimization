@@ -1,6 +1,7 @@
 
 import numpy as np
 import pyvista as pv
+import os
 
 
 def plot_graph(xs, ys, x_label, y_label, output_file_path = None):
@@ -12,4 +13,7 @@ def plot_graph(xs, ys, x_label, y_label, output_file_path = None):
     if output_file_path is None:
         chart.show()
     else:
+        parent_folder_path = os.path.split(output_file_path)[0]
+        if not os.path.exists(parent_folder_path):
+            os.makedirs(parent_folder_path)
         chart.show(screenshot = output_file_path)

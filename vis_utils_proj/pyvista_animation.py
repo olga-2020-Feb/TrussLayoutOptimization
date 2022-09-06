@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import pyvista as pv
 
@@ -27,6 +29,9 @@ def animation_v_e(v_block_list, e_list, edge_colors_list = None,
     plotter.set_background('white')
     # Open a movie file
     if file_2_save is not None:
+        parent_folder_path = os.path.split(file_2_save)[0]
+        if not os.path.exists(parent_folder_path):
+            os.makedirs(parent_folder_path)
         plotter.open_movie(file_2_save)
 
     actors_list = []
