@@ -55,15 +55,20 @@ def prepare_input_data(vertices, elems, dof, f, ground_str_edges = None, init_ed
 
 
 def create_PML(vertices, ground_str_edges = None, init_edges = None):
+    if ground_str_edges is None:
+        i_s = np.repeat(np.arange(len(vertices)), len(vertices)).flatten()
+        j_s = np.tile(np.arange(len(vertices)), len(vertices)).flatten()
+        edges = np.array([i_s, j_s]).T
+        ground_str_edges = np.delete(edges, i_s <= j_s, axis=0)
 
     cdists = scipy.spatial.distance.cdist(vertices, vertices)
 
-    l = cdists[ground_str_edges[:, 0]].take(ground_str_edges[:, 1])
+    l = cdists[ground_str_edges[:, 0], ground_str_edges[:, 1]]
 
     init_guess_mask = (np.sum((init_edges[:, None, :] == ground_str_edges).all(axis=2), axis=0) > 0)
 
     PML = np.array([ground_str_edges[:, 0], ground_str_edges[:, 1], l]).T
-    PML = np.hstack((PML, np.array([init_guess_mask, init_guess_mask]).T))
+    PML = np.hstack((PML, np.array([init_guess_mask]).T))
     return PML
 
 

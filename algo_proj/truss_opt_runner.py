@@ -23,11 +23,11 @@ def trussOptOneTime(input_file_path, output_csv_file_path,
     if output_csv_file_path is not None:
         save_width_2_csv(output_csv_file_path, Nd, Cns[-1][:, [0, 1]].astype(int), a_s[-1])
 
-    if output_csv_file_path is not None:
+    if output_graph_file_path is not None:
         plot_graph(np.arange(len(volumes)), volumes, 'Iteration', 'Volume', output_graph_file_path)
 
     if output_animation_file_path is not None:
-        threshold = max(np.concatenate(a_s)) * 1e-3
+        threshold = np.min([np.max(a) for a in a_s]) * 1e-3
         plot_n_save_animation(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, dof, f, threshold,
                               output_animation_file_path)
 
@@ -113,13 +113,27 @@ def update_data_movie_cb(iter, dof, f, initials,
     Nd = Nds[-1]
     PML = PMLs[-1]
 
-    threshold = max(np.concatenate(a_s)) * 1e-3
+    threshold = np.min([np.max(a) for a in a_s]) * 1e-6
+    #threshold = 0.0
 
     path_parts = os.path.splitext(user_data[1])
     file_path = '{}_{}_{}'.format(path_parts[0], iter, path_parts[1])
+    chunk_count = 10
+    edge_scale_needed = True
+
+    if len(user_data) > 2 and user_data[2] is not None:
+        plot_graph(np.arange(len(volumes)), volumes, 'Iteration', 'Volume', user_data[2])
+
+
+    if len(user_data) > 3:
+        chunk_count = user_data[3]
+
+    if len(user_data) > 4:
+        edge_scale_needed = user_data[4]
+
 
     plot_n_save_animation(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, dof, f, threshold,
-                          file_path)
+                          file_path, chunk_count = chunk_count, edge_scale_needed=edge_scale_needed)
 
     return Nd, PML, dof, f, initials
 

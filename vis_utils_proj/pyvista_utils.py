@@ -150,7 +150,7 @@ def plot_v_e(v, e,
             line_width = calc_line_width(v, e)
         line_widths = np.repeat(line_width, len(e))
 
-    p = add_tubes(p, v[e[:, 0]], v[e[:, 1]], line_widths, colors)
+    p = add_tubes(p, v[e[:, 0]], v[e[:, 1]], line_widths / 2., colors)
 
     if sphere_idxs is not None:
         points_mesh = numpy_to_pyvista(v[sphere_idxs])

@@ -61,7 +61,7 @@ def solveLoop(Nd, PML, dof, f, initials):
     us = []
     PMLs = []
     for itr in range(1, 100):
-        Cn = PML[(PML[:, 3] + PML[:,4]) > 0]
+        Cn = PML[(PML[:, 3]) > 0]
         vol, a, q, u = solveLP(Nd, Cn, f, dof, initials[0], initials[1], initials[2])
         print("Itr: %d, vol: %f, mems: %d" % (itr, vol, len(Cn)))
         volumes.append(vol)

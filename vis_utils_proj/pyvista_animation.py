@@ -9,13 +9,14 @@ def animation_v_e(v_block_list, e_list, edge_colors_list = None,
                   sphere_idxs_list = None, sphere_colors_list = None, sphere_size_list = None,
                   arrow_idxs_list = None, arrow_dirs_list = None,
                   arrow_colors_list = None, arrow_scale_list = None,
-                  file_2_save = None):
+                  file_2_save = None, chunk_count = 10, scale_needed = True):
 
     dists = np.sqrt(np.sum((v_block_list[0][0][e_list[0][:, 0]] - v_block_list[0][0][e_list[0][:, 1]]) ** 2, axis=1))
 
     edge_mesh_list_list, hlp_edge_mesh_list_list_list, \
     edge_chunk_indices_list_list, hlp_edge_chunk_indices_list_list_list = \
-        get_mesh_lists(v_block_list, e_list, line_width_list, 1, 10, chunk_count = 10)
+        get_mesh_lists(v_block_list, e_list, line_width_list, #1, 10,
+                       chunk_count = chunk_count, scale_needed=scale_needed)
 
     sphere_mesh_list, hlp_sphere_mesh_list_list = get_spere_mesh_lists(v_block_list, sphere_idxs_list)
 
@@ -73,18 +74,18 @@ def animation_v_e(v_block_list, e_list, edge_colors_list = None,
 
 
 def get_mesh_lists(v_block_list, e_list, line_width_list,
-                   edge_scale_min = None, edge_scale_max = None, chunk_count = 0):
+                   edge_scale_min = None, edge_scale_max = None, chunk_count = 0, scale_needed = True):
 
-    all_widths =  [item for sublist in line_width_list for item in sublist]
+    all_widths =  np.concatenate(line_width_list)
     max_width = np.max(all_widths)
     min_width = np.min(all_widths)
     if edge_scale_min is None:
-        edge_scale_min = np.min([item for sublist in line_width_list for item in sublist])
+        edge_scale_min = min_width
     if edge_scale_max is None:
-        edge_scale_max = np.max([item for sublist in line_width_list for item in sublist])
+        edge_scale_max = max_width
     edge_scale = 1
 
-    if max_width > min_width:
+    if scale_needed and max_width > min_width:
         edge_scale = (edge_scale_max - edge_scale_min) / (max_width - min_width)
 
     edge_mesh_list_list = []
@@ -94,7 +95,10 @@ def get_mesh_lists(v_block_list, e_list, line_width_list,
     for i, (v_block, edges) in enumerate(zip(v_block_list, e_list)):
         radii = None
         if line_width_list is not None:
-            radii = edge_scale_min + (np.array(line_width_list[i]) - min_width) * edge_scale
+            if scale_needed:
+                radii = edge_scale_min + (np.array(line_width_list[i]) - min_width) * edge_scale
+            else:
+                radii = np.array(line_width_list[i])
         tube_meshes, chunk_indices = get_tube_meshes(v_block[0][edges[:, 0]], v_block[0][edges[:, 1]], radii, chunk_count)
         hlp_edge_mesh_list_list = []
         hlp_edge_chunk_indices_list_list = []
@@ -201,13 +205,16 @@ def add_edges_old(plotter, edge_mesh_list, actors_list, colors, rgb):
     return actors_list
 
 
-def add_edges(plotter, edge_mesh_list, chunk_indices, line_width_list, actors_list, colors, rgb):
+def add_edges(plotter, edge_mesh_list, chunk_indices, areas_list, actors_list, colors, rgb):
     for j, edge_mesh in enumerate(edge_mesh_list):
         if colors is None:
             edge_colors = np.tile([0], (len(edge_mesh.points), 1))
         else:
             edge_colors = colors[chunk_indices[j]]#np.tile(colors[chunk_indices[j]], (len(edge_mesh.points), 1))
-        line_width = np.mean(np.array(line_width_list)[chunk_indices[j]])
+        area = np.mean(np.array(areas_list)[chunk_indices[j]])
+        line_width = 2 * ((area / np.pi) ** .5)
+        if line_width < 1:
+            line_width = 1
         last_actor = plotter.add_mesh(edge_mesh, scalars=edge_colors, rgb=rgb,
                                       render_lines_as_tubes=True, line_width = line_width,
                                       style='wireframe')

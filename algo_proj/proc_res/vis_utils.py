@@ -5,16 +5,18 @@ from proc_res.vis_pyvista import prepareAnimationConsts
 from pyvista_animation import animation_v_e
 from pyvista_utils import plot_v_e
 
-def plot_n_save_animation(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, dof, f, threshold, output_file_path):
+def plot_n_save_animation(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, dof,
+                          f, threshold, output_file_path, chunk_count = 10, edge_scale_needed = True):
     animation_edges, animation_colors, animation_widths, \
     all_animation_edges, all_animation_colors, all_animation_widths = \
         collect_animation_data(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, threshold)
-    plotTrussAnimation(init_Nd, animation_colors, animation_edges, animation_widths, dof, f, output_file_path)
+    plotTrussAnimation(init_Nd, animation_colors, animation_edges, animation_widths, dof, f,
+                       output_file_path, chunk_count = chunk_count, edge_scale_needed=edge_scale_needed)
 
 
 def plotTrussAnimation(Nd, animation_colors, animation_edges, animation_widths,
                        dof, f,
-                       output_file_path = r"output/Animation.mp4"):
+                       output_file_path = r"output/Animation.mp4", chunk_count = 10, edge_scale_needed = True):
     dof_0_idxs, sphere_colors, _, arrow_idx, arrow_dirs, arrow_colors, _ = \
         prepareAnimationConsts(dof, f)
     ver = [[Nd]] * len(animation_edges)
@@ -29,7 +31,7 @@ def plotTrussAnimation(Nd, animation_colors, animation_edges, animation_widths,
                   sphere_size_list=[10] * len(animation_edges),
                   arrow_idxs_list=arrow_idxs_list, arrow_dirs_list=arrow_dirs_list, arrow_colors_list=arrow_colors_list,
                   arrow_scale_list = [50] * len(animation_edges),
-                  file_2_save=output_file_path)
+                  file_2_save=output_file_path, chunk_count = chunk_count, scale_needed=edge_scale_needed )
 
 
 
@@ -115,9 +117,9 @@ def get_edges_from_data(Cn, a, q, threshold):
     all_iter_colors, all_iter_edges, all_iter_widths = [], [], []
 
     for i in range(len(a)):
-        radius = (a[i] / np.pi) ** .5
+        area = a[i]
         all_iter_edges.append([int(Cn[i][0]), int(Cn[i][1])])
-        all_iter_widths.append(radius)
+        all_iter_widths.append(area)
         if all([q[lc][i] >= 0 for lc in range(len(q))]):
             all_iter_colors.append(np.array([255, 0, 0]))  # red
         elif all([q[lc][i] <= 0 for lc in range(len(q))]):
@@ -126,7 +128,7 @@ def get_edges_from_data(Cn, a, q, threshold):
             all_iter_colors.append(np.array([200, 200, 200]))  # gray
         if a[i] >= threshold:
             iter_edges.append([int(Cn[i][0]), int(Cn[i][1])])
-            iter_widths.append(radius)
+            iter_widths.append(area)
             if all([q[lc][i] >= 0 for lc in range(len(q))]):
                 iter_colors.append(np.array([255, 0, 0]))  # red
             elif all([q[lc][i] <= 0 for lc in range(len(q))]):
