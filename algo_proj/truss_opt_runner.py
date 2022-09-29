@@ -155,6 +155,7 @@ def preproc_data_visualize_cb(Nd, PML, dof, f, initials, user_data):
 def postproc_data_movie_cb(all_Nds, all_PMLs, all_dof, all_f, all_initials,
                            all_a_s, all_q_s, all_us, all_volumes, all_Cns, postproc_user_data):
     path_parts = os.path.splitext(postproc_user_data[0])
+    print('postproc_data_movie_cb')
     for i, a_s in enumerate(all_a_s):
         if not os.path.exists(path_parts[0]):
             os.makedirs(path_parts[0])
