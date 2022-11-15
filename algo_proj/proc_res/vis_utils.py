@@ -118,8 +118,11 @@ def get_edges_from_data(Cn, a, q, threshold):
 
     for i in range(len(a)):
         area = a[i]
+        diameter = 2 * ((area / np.pi) ** .5)
+        if np.isnan(diameter):
+            diameter = 0.0
         all_iter_edges.append([int(Cn[i][0]), int(Cn[i][1])])
-        all_iter_widths.append(area)
+        all_iter_widths.append(diameter)
         if all([q[lc][i] >= 0 for lc in range(len(q))]):
             all_iter_colors.append(np.array([255, 0, 0]))  # red
         elif all([q[lc][i] <= 0 for lc in range(len(q))]):
@@ -128,7 +131,7 @@ def get_edges_from_data(Cn, a, q, threshold):
             all_iter_colors.append(np.array([200, 200, 200]))  # gray
         if a[i] >= threshold:
             iter_edges.append([int(Cn[i][0]), int(Cn[i][1])])
-            iter_widths.append(area)
+            iter_widths.append(diameter)
             if all([q[lc][i] >= 0 for lc in range(len(q))]):
                 iter_colors.append(np.array([255, 0, 0]))  # red
             elif all([q[lc][i] <= 0 for lc in range(len(q))]):
