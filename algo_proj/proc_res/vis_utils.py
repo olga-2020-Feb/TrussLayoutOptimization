@@ -6,17 +6,20 @@ from pyvista_animation import animation_v_e
 from pyvista_utils import plot_v_e
 
 def plot_n_save_animation(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, dof,
-                          f, threshold, output_file_path, chunk_count = 10, edge_scale_needed = True):
+                          f, threshold, output_file_path, chunk_count = 10, edge_scale_needed = True,
+                          sphere_size = 10, arrow_scale=None):
     animation_edges, animation_colors, animation_widths, \
     all_animation_edges, all_animation_colors, all_animation_widths = \
         collect_animation_data(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, threshold)
     plotTrussAnimation(init_Nd, animation_colors, animation_edges, animation_widths, dof, f,
-                       output_file_path, chunk_count = chunk_count, edge_scale_needed=edge_scale_needed)
+                       output_file_path, chunk_count = chunk_count, edge_scale_needed=edge_scale_needed,
+                       sphere_size = sphere_size, arrow_scale=arrow_scale)
 
 
 def plotTrussAnimation(Nd, animation_colors, animation_edges, animation_widths,
                        dof, f,
-                       output_file_path = r"output/Animation.mp4", chunk_count = 10, edge_scale_needed = True):
+                       output_file_path = r"output/Animation.mp4", chunk_count = 10, edge_scale_needed = True,
+                       sphere_size = 10, arrow_scale = None):
     dof_0_idxs, sphere_colors, _, arrow_idx, arrow_dirs, arrow_colors, _ = \
         prepareAnimationConsts(dof, f)
     ver = [[Nd]] * len(animation_edges)
@@ -25,17 +28,22 @@ def plotTrussAnimation(Nd, animation_colors, animation_edges, animation_widths,
     arrow_idxs_list = [arrow_idx] * len(animation_edges)
     arrow_dirs_list = [arrow_dirs] * len(animation_edges)
     arrow_colors_list = [arrow_colors] * len(animation_edges)
+    arrow_scale_list = None
+    if arrow_scale is not None:
+        arrow_scale_list = [arrow_scale] * len(arrow_idx)
     animation_v_e(ver, animation_edges,
                   edge_colors_list=animation_colors, line_width_list=animation_widths,
                   sphere_idxs_list=dof_0_idxs_list, sphere_colors_list=sphere_colors_list,
-                  sphere_size_list=[10] * len(animation_edges),
+                  sphere_size_list=[sphere_size] * len(animation_edges),
+                  arrow_scale_list = arrow_scale_list,
                   arrow_idxs_list=arrow_idxs_list, arrow_dirs_list=arrow_dirs_list, arrow_colors_list=arrow_colors_list,
                   #arrow_scale_list = [50] * len(animation_edges),
                   file_2_save=output_file_path, chunk_count = chunk_count, scale_needed=edge_scale_needed )
 
 
 
-def pyvistaPlot(vertices,edges, a, q, str, threshold, dof=[], f=[]):
+def pyvistaPlot(vertices,edges, a, q, str, threshold, dof=[], f=[],
+                arrow_scale=5, sphere_size=5):
 
     iter_line_widths = []
 
@@ -54,7 +62,9 @@ def pyvistaPlot(vertices,edges, a, q, str, threshold, dof=[], f=[]):
         arrow_dirs = f[f_idxs]
 
     plot_v_e(vertices, np.array(iter_edges).astype(np.int),
-                  colors = np.array(iter_colors), line_widths=iter_line_widths,sphere_idxs= dof_0_idxs, sphere_colors= np.zeros((len(dof_0_idxs), 3)),
+                  colors = np.array(iter_colors), line_widths=np.array(iter_line_widths),
+             arrow_scale=arrow_scale, sphere_size=sphere_size,
+             sphere_idxs= dof_0_idxs, sphere_colors= np.zeros((len(dof_0_idxs), 3)),
                   arrow_idxs= arrow_idx,arrow_dirs= arrow_dirs,arrow_colors= np.ones((len(arrow_idx), 3)).astype(np.int) * [0, 255, 0])
 
 
