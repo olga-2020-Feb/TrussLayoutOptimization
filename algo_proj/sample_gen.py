@@ -22,11 +22,6 @@ def prepareNastran(input_file):
 def prepare_input_data(vertices, elems, dof, f, ground_str_edges = None, init_edges = None):
     Nd = vertices
 
-    if ground_str_edges is None:
-        i_s = np.repeat(np.arange(len(vertices)), len(vertices)).flatten()
-        j_s = np.tile(np.arange(len(vertices)), len(vertices)).flatten()
-        edges = np.array([i_s, j_s]).T
-        ground_str_edges = np.delete(edges, i_s <= j_s, axis=0)
 
     if init_edges is None:
         init_edges = get_edges_from_elements(elems)
@@ -36,8 +31,14 @@ def prepare_input_data(vertices, elems, dof, f, ground_str_edges = None, init_ed
         cdists = scipy.spatial.distance.cdist(vertices[non_connected_vert_idxs], vertices[connected_vert_idxs])
         nearast_idxs = np.argsort(cdists, axis=1)[:, :3]
         new_edges = np.stack((np.repeat(non_connected_vert_idxs, 3), connected_vert_idxs[nearast_idxs.flatten()])).T
-        init_edges = np.concatenate((np.unique(init_edges, axis=0), new_edges))
+        #init_edges = np.concatenate((np.unique(init_edges, axis=0), new_edges))
+        init_edges = np.unique(np.sort(init_edges, axis=1), axis=0)
 
+    if ground_str_edges is None:
+        i_s = np.repeat(np.arange(len(vertices)), len(vertices)).flatten()
+        j_s = np.tile(np.arange(len(vertices)), len(vertices)).flatten()
+        edges = np.array([i_s, j_s]).T
+        ground_str_edges = np.delete(edges, i_s <= j_s, axis=0)
 
     # Load and support conditions (derived from file)
     # Create the 'ground structure' from the first guess
@@ -63,7 +64,11 @@ def create_PML(vertices, ground_str_edges = None, init_edges = None):
 
     l = cdists[ground_str_edges[:, 0], ground_str_edges[:, 1]]
 
-    init_guess_mask = (np.sum((init_edges[:, None, :] == ground_str_edges).all(axis=2), axis=0) > 0)
+    try:
+        init_guess_mask = (np.sum((init_edges[:, None, :] == ground_str_edges).all(axis=2), axis=0) > 0)
+    except:
+        init_guess_mask = \
+            np.array([np.sum([ground_row == init_row for init_row in init_edges]) > 0 for ground_row in ground_str_edges])
 
     PML = np.array([ground_str_edges[:, 0], ground_str_edges[:, 1], l]).T
     PML = np.hstack((PML, np.array([init_guess_mask]).T))

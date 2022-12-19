@@ -167,7 +167,7 @@ def plot_v_e(v, e,
 
     if arrow_idxs is not None:
         if arrow_scale is None:
-            arrow_scale = calc_arrows_scale(dists, arrow_dirs)
+            arrow_scale = calc_arrows_scale(v, arrow_dirs)
         if arrow_colors is None:
             arrow_colors = np.arange(len(arrow_idxs))
         rgb = len(arrow_colors.shape) > 1
@@ -180,9 +180,10 @@ def plot_v_e(v, e,
     p.show(interactive = True, auto_close=False)
 
 
-def calc_arrows_scale(dists, arrow_dirs):
+def calc_arrows_scale(v, arrow_dirs):
     arrow_dir_dists = np.sqrt(np.sum(arrow_dirs ** 2, axis=1))
     arrow_dir_dists_max = np.max(arrow_dir_dists)
+    dists = np.max(v, axis=0) - np.min(v, axis=0)
     arrow_scale = np.min(dists) / arrow_dir_dists_max
     return arrow_scale
 

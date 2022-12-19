@@ -43,7 +43,7 @@ def plotTrussAnimation(Nd, animation_colors, animation_edges, animation_widths,
 
 
 def pyvistaPlot(vertices,edges, a, q, str, threshold, dof=[], f=[],
-                arrow_scale=5, sphere_size=5):
+                arrow_scale=None, sphere_size=5):
 
     iter_line_widths = []
 
@@ -66,12 +66,6 @@ def pyvistaPlot(vertices,edges, a, q, str, threshold, dof=[], f=[],
              arrow_scale=arrow_scale, sphere_size=sphere_size,
              sphere_idxs= dof_0_idxs, sphere_colors= np.zeros((len(dof_0_idxs), 3)),
                   arrow_idxs= arrow_idx,arrow_dirs= arrow_dirs,arrow_colors= np.ones((len(arrow_idx), 3)).astype(np.int) * [0, 255, 0])
-
-
-
-
-    # edges = np.array(edges+edges)       #3D Plot bug in here
-    # vplt.plot_v_e(vertices, np.array(edges.astype(np.int)))
 
 
 def collect_animation_data(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, threshold):

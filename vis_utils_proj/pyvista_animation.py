@@ -130,7 +130,7 @@ def get_arrow_mesh_lists(v_block_list, dists, arrow_idxs_list = None,
         for i, (arrow_idxs, arrow_dirs, v_block) in \
                 enumerate(zip(arrow_idxs_list, arrow_dirs_list, v_block_list)):
             if arrow_scale_list is None:
-                arrow_scale = calc_arrows_scale(dists, arrow_dirs)
+                arrow_scale = calc_arrows_scale(v_block, arrow_dirs)
             else:
                 arrow_scale = arrow_scale_list[i]
             arrows_mesh = add_arrows_copy(v_block[0][arrow_idxs] - arrow_dirs * arrow_scale, arrow_dirs,

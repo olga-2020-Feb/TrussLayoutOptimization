@@ -113,11 +113,10 @@ def update_data_movie_cb(iter, dof, f, initials,
     Nd = Nds[-1]
     PML = PMLs[-1]
 
-    threshold = np.min([np.max(a) for a in a_s]) * 1e-6
-    #threshold = 0.0
-
-    path_parts = os.path.splitext(user_data[1])
-    file_path = '{}_{}_{}'.format(path_parts[0], iter, path_parts[1])
+    file_path = None
+    if len(user_data) > 1 and user_data[1] is not None:
+        path_parts = os.path.splitext(user_data[1])
+        file_path = '{}_{}_{}'.format(path_parts[0], iter, path_parts[1])
     chunk_count = 10
     edge_scale_needed = True
 
@@ -131,9 +130,21 @@ def update_data_movie_cb(iter, dof, f, initials,
     if len(user_data) > 4:
         edge_scale_needed = user_data[4]
 
+    threshold = None
 
-    plot_n_save_animation(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, dof, f, threshold,
-                          file_path, chunk_count = chunk_count, edge_scale_needed=edge_scale_needed)
+    if len(user_data) > 5 and user_data[5] is not None:
+        threshold = float(user_data[5])
+
+    if threshold is None:
+        threshold = np.min([np.max(a) for a in a_s]) * 1e-6
+        #threshold = 0.0
+
+
+    pyvistaPlot(Nds[-1], Cns[-1][:, [0, 1, 3]].tolist(), a_s[-1], qs[-1], str, threshold, dof, f)
+
+    if file_path is not None:
+        plot_n_save_animation(init_Nd, init_PML, Cns, Nds, volumes, a_s, qs, us, PMLs, dof, f, threshold,
+                              file_path, chunk_count = chunk_count, edge_scale_needed=edge_scale_needed)
 
     return Nd, PML, dof, f, initials
 
